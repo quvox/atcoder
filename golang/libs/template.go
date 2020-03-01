@@ -9,21 +9,41 @@ import (
   "strings"
 )
 
-var sc = bufio.NewScanner(os.Stdin)
+const (
+  InputSize = 100000 // 10^5
+)
+var (
+  rdr = bufio.NewReaderSize(os.Stdin, InputSize)
+)
 
-func nextLine() string {
-  sc.Scan()
-  return sc.Text()
+func readLine() string {
+  buf := make([]byte, 0, InputSize)
+  for {
+    l, p, e := rdr.ReadLine()
+    if e != nil {
+      panic(e)
+    }
+    buf = append(buf, l...)
+    if !p {
+      break
+    }
+  }
+  return string(buf)
 }
 
+
+func getStringArray() []string {
+  return strings.Split(readLine(), " ")
+}
+
+
 func nextLineValue() int {
-  sc.Scan()
-  return getInt(sc.Text())
+  v, _ := strconv.Atoi(readLine())
+  return v
 }
 
 func nextLineValues() []int {
-  sc.Scan()
-  return getIntArray(sc.Text())
+  return getIntArray(readLine())
 }
 
 func getInt(s string) int {
@@ -69,7 +89,7 @@ func removeDupIntSlice(values *[]int) []int {
 
 
 func main() {
-  s := nextLine()
+  s := readLine()
   for {
     l := len(s)
     if l == 0 { break }
