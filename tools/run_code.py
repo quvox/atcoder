@@ -8,7 +8,7 @@ import time
 def _parser():
     usage = 'python {} [-d directory] [-t testcase file] [-a anser file] [--help]'.format(__file__)
     argparser = ArgumentParser(usage=usage)
-    argparser.add_argument('-d', '--directory', type=str, help='password to login')
+    argparser.add_argument('-d', '--directory', type=str, help='root directory for the test case files')
     argparser.add_argument('-t', '--testcase', type=str, help='filename of testcase')
     argparser.add_argument('-a', '--answer', type=str, help='filename of test anser')
     args = argparser.parse_args()

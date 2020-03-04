@@ -23,15 +23,28 @@ prepare:
 	@echo "++++ prepare envfile for contest [$${contest^^}] ++++"
 	@echo "";
 	@echo "CONTEST=$${contest^^}" > .CONTEST
-	@mkdir -p contests/$${contest^^} samples
+	@mkdir -p contests/$${contest^^}
+
+get:
+	rm -rf samples
+	. .USER && . .CONTEST && cd ../tools/ && . venv/bin/activate && python get_samplecases.py -u $${USER} -p $${PASSWORD} -c $${CONTEST} -q $${q} -d samples
+
 
 start:
-	@if [ -f main.go ]; then \
-		cp main.go main.tmp.go \
+	@if [ -z "${q}" ]; then \
+		echo "***** q is required. Ex. make done q=a"; \
+		exit 1; \
 	fi
+	echo ":::::"
+	@if [ -f main.go ]; then \
+		cp main.go main.tmp.go; \
+	fi
+	echo "222"
 	rm -f go.mod go.sum
 	cp libs/template.go main.go
 	go mod init main
+	make get q=${q}
+
 
 done:
 	@if [ -z "${q}" ]; then \
@@ -47,7 +60,7 @@ resume:
 		exit 1; \
 	fi
 	@if [ -f main.go ]; then \
-		cp main.go main.tmp.go \
+		cp main.go main.tmp.go; \
 	fi
 	. .CONTEST && cp main.go contests/$${CONTEST}/$${q^^}/main.go main.go
 	rm -f go.mod go.sum
