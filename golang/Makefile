@@ -27,7 +27,7 @@ prepare:
 
 get:
 	rm -rf samples
-	. .USER && . .CONTEST && cd ../tools/ && . venv/bin/activate && python get_samplecases.py -u $${USER} -p $${PASSWORD} -c $${CONTEST} -q $${q} -d samples
+	. .USER && . .CONTEST && cd ../tools/ && . venv/bin/activate && python get_samplecases.py -u $${USER} -p $${PASSWORD} -c $${CONTEST} -q $${q} -d ${PWD}/samples
 
 
 start:
@@ -74,7 +74,15 @@ test:
 	@cd ../tools/ && . venv/bin/activate && python run_code.py -d ${PWD} -t ${case} -a ${answer}
 
 
-test1:
+test-contest:
+	@for f in samples/in/*; do \
+		FILENAME=`basename $${f}`; \
+		echo "--------- TESTING: $${FILENAME} ---------"; \
+		make test case=$${f} answer=samples/out/$${FILENAME}; \
+	done
+
+
+test-all:
 	@cd ../testcase/${proj}/${q}/in && for f in *; do \
 		echo "*TESTING: $${f}"; \
 		cat $${f} | (cd ../../../../golang/; make run) > tmpres; \

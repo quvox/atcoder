@@ -31,7 +31,15 @@ def run_code(directory, testfile, answerfile):
     timeover = {True: " [TLE]", False: ""}
     print("** test case and answer: %s, %s" % (testfile, answerfile))
     print("  elapsed_time = %d ms%s" % (process_time, timeover[process_time >= 2000]))
-    print("  [%s] code_result: %s" % (compare_result(answerfile, code_result), code_result))
+    judgement = compare_result(answerfile, code_result)
+    print("  code_result: %s" % judgement)
+    if not judgement:
+        print("=== Your result::::")
+        print(code_result)
+        print("=== Answer (should be)::::")
+        with open(answerfile, "r") as f:
+            answer_string = f.read()
+        print(answer_string)
 
 
 def compare_result(filepath, result_string):
