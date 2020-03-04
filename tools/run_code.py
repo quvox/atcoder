@@ -51,13 +51,13 @@ def compare_result(filepath, result_string):
 if __name__ == '__main__':
     arg = _parser()
     if not os.path.exists(arg.directory):
-        sys.stderr.write("# no such directory")
+        sys.stderr.write("# no such directory\n")
         sys.exit(1)
     if not os.path.exists(os.path.join(arg.directory, arg.testcase)):
-        sys.stderr.write("# no such test file")
+        sys.stderr.write("# no such test file\n")
         sys.exit(1)
     if not os.path.exists(os.path.join(arg.directory, arg.answer)):
-        sys.stderr.write("# no such test answer file")
+        sys.stderr.write("# no such test answer file\n")
         sys.exit(1)
     run_code(arg.directory, arg.testcase, arg.answer)
 

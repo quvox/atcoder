@@ -83,13 +83,22 @@ test-contest:
 
 
 test-all:
-	@cd ../testcase/${proj}/${q}/in && for f in *; do \
-		echo "*TESTING: $${f}"; \
-		cat $${f} | (cd ../../../../golang/; make run) > tmpres; \
-		if [ -n `diff tmpres ../out/$${f}`]; then \
-			echo "**** FAILED ****"; \
-		else \
-			echo "OK..."; \
-		fi
-		rm -f tmpres; \
+	@if [ -z "${q}" ]; then \
+		echo "***** q is required. Ex. make resume q=a"; \
+		exit 1; \
+	fi
+	@. .CONTEST && if [ ! -d "../testcase/$${CONTEST}/${q}" ]; then \
+		echo "***** No test cases for contest $${CONTEST}/${q} are downloaded. Please download them in advance at the following URL."; \
+		echo "https://www.dropbox.com/sh/nx3tnilzqz7df8a/AAAYlTq2tiEHl5hsESw6-yfLa?dl=0"; \
+		exit 1; \
+	fi
+	@rm -f TEST_RESULT
+	@. .USER && . .CONTEST && for f in ../testcase/$${CONTEST}/${q}/in/*; do \
+		FILENAME=`basename $${f}`; \
+		echo "--------- TESTING: $${FILENAME} ---------"; \
+		make test case=$${f} answer=../testcase/$${CONTEST}/${q}/out/$${FILENAME} >> TEST_RESULT; \
 	done
+	@cat TEST_RESULT
+	@if [ -n "`grep 'code_result: False' TEST_RESULT`" ]; then \
+		echo "!!!!!! Some tests failed. Please check !!!!!!"; \
+	fi
