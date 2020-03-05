@@ -245,6 +245,7 @@ dmypy.json
 
 .USER
 .CONTEST
+.QUESTION
 go.mod
 # End of https://www.gitignore.io/api/go,macos,python,intellij
 
