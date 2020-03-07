@@ -10,7 +10,7 @@ import (
 )
 
 const (
-  InputSize = 100000 // 10^5
+  InputSize = 500000 // 10^5
 )
 var (
   rdr = bufio.NewReaderSize(os.Stdin, InputSize)
@@ -87,24 +87,67 @@ func removeDupIntSlice(values *[]int) []int {
   return uniq
 }
 
-
-func main() {
-  s := readLine()
-  for {
-    l := len(s)
-    if l == 0 { break }
-    if l-len("dream") > -1 && s[l-len("dream"):] == "dream" {
-      s = s[:l-len("dream")]
-    } else if l-len("erase") > -1 && s[l-len("erase"):] == "erase" {
-      s = s[:l-len("erase")]
-    } else if l-len("dreamer") > -1 && s[l-len("dreamer"):] == "dreamer" {
-      s = s[:l-len("dreamer")]
-    } else if l-len("eraser") > -1 && s[l-len("eraser"):] == "eraser" {
-      s = s[:l-len("eraser")]
-    } else {
-      fmt.Println("NO")
-      return
+func removeDupStringSlice(values *[]string) []string {
+  m := make(map[string]bool)
+  uniq := []string{}
+  for _, v := range *values {
+    if !m[v] {
+      uniq = append(uniq, v)
+      m[v] = true
     }
   }
-  fmt.Println("YES")
+  return uniq
+}
+
+func countUniqIntInSlice(values *[]int) map[int]int {
+  uniq := make(map[int]int)
+  for _, v := range *values {
+    if _, ok := uniq[v]; !ok {
+      uniq[v] = 1
+    } else {
+      uniq[v] += 1
+    }
+  }
+  return uniq
+}
+
+func countUniqStringInSlice(values *[]string) map[string]int {
+  uniq := make(map[string]int)
+  for _, v := range *values {
+    if _, ok := uniq[v]; !ok {
+      uniq[v] = 1
+    } else {
+      uniq[v] += 1
+    }
+  }
+  return uniq
+}
+
+
+func main() {
+  n := nextLineValue()
+  s := readLine()
+  inputString := make([]string, n)
+  for i:=0; i<n; i++ {
+    inputString[i] = string(s[i])
+  }
+  uniq := countUniqStringInSlice(&inputString)
+
+  q := nextLineValue()
+  queries := make([]string, q)
+  for i:=0; i<q; i++ {
+    queries[i] = readLine()
+  }
+
+  for i:=0; i<q; i++ {
+    query := strings.Split(queries[i], " ")
+    num, _ := strconv.Atoi(query[1])
+    if query[0] == "1" {
+      inputString[num-1] = query[2]
+    } else {
+      numEnd, _ := strconv.Atoi(query[2])
+      toCheck := inputString[num-1:numEnd]
+      fmt.Println(len(uniq))
+    }
+  }
 }
