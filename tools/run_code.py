@@ -20,10 +20,10 @@ def run_code(directory, testfile, answerfile):
     cmd1 = "cat %s" % testfile
     cmd2 = "make run"
     try:
-        start_time = int(time.time())
+        start_time = int(time.time()*1000)
         res = subprocess.Popen(cmd1.split(" "), stdout=subprocess.PIPE)
         code_result = subprocess.check_output(cmd2.split(" "), stdin=res.stdout).decode().rstrip()
-        process_time = int(time.time()) - start_time
+        process_time = int(time.time()*1000) - start_time
     except subprocess.CalledProcessError as e:
         print("\n#### Exit with error: code=%d" % (e.returncode))
         return

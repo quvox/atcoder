@@ -2,29 +2,41 @@ package main
 
 import (
   "bufio"
+  "bytes"
   "fmt"
+  "io"
+  "io/ioutil"
   "os"
   "sort"
   "strconv"
   "strings"
+  "unsafe"
 )
 
 const (
   InputSize = 500000 // 10^5
 )
-var (
-  rdr = bufio.NewReaderSize(os.Stdin, InputSize)
-)
 
-func readLine() string {
-  buf := make([]byte, 0, InputSize)
+func getReader() *bufio.Reader {
+  return bufio.NewReaderSize(os.Stdin, InputSize)
+}
+
+func readAllFromStdin() *bufio.Reader {
+  rdr := bufio.NewReader(os.Stdin)
+  buf, _ := ioutil.ReadAll(rdr)
+  return bufio.NewReader(bytes.NewReader(buf))
+}
+
+
+func readLine(rdr *bufio.Reader) string {
+  buf :=[]byte{}
   for {
     l, p, e := rdr.ReadLine()
-    if e != nil {
-      panic(e)
+    if e != nil && e != io.EOF {
+      break
     }
     buf = append(buf, l...)
-    if !p {
+    if !p || e == io.EOF {
       break
     }
   }
@@ -32,18 +44,18 @@ func readLine() string {
 }
 
 
-func getStringArray() []string {
-  return strings.Split(readLine(), " ")
+func getStringArray(rdr *bufio.Reader) []string {
+  return strings.Split(readLine(rdr), " ")
 }
 
 
-func nextLineValue() int {
-  v, _ := strconv.Atoi(readLine())
+func nextLineValue(rdr *bufio.Reader) int {
+  v, _ := strconv.Atoi(readLine(rdr))
   return v
 }
 
-func nextLineValues() []int {
-  return getIntArray(readLine())
+func nextLineValues(rdr *bufio.Reader) []int {
+  return getIntArray(readLine(rdr))
 }
 
 func getInt(s string) int {
@@ -124,30 +136,52 @@ func countUniqStringInSlice(values *[]string) map[string]int {
 }
 
 
+func reverseString(s string) string {
+  ss := stringToByte(s)
+  for i, j := 0, len(ss)-1; i < j; i, j = i+1, j-1 {
+    ss[i], ss[j] = ss[j], ss[i]
+  }
+  return byteToString(&ss)
+}
+
+func reverseBytes(b bytes.Buffer) []byte {
+  ss := b.Bytes()
+  for i, j := 0, len(ss)-1; i < j; i, j = i+1, j-1 {
+    ss[i], ss[j] = ss[j], ss[i]
+  }
+  return ss
+}
+
+func byteToString(b *[]byte) string {
+  return *(*string)(unsafe.Pointer(b))
+}
+
+func stringToByte(s string) []byte {
+  return *(*[]byte)(unsafe.Pointer(&s))
+}
+
+func getStringBuffer(s string) bytes.Buffer {
+  var b bytes.Buffer
+  b.Write(stringToByte(s))
+  return b
+}
+
+func addStringToBuffer(s string, buf *bytes.Buffer) {
+  buf.Write(stringToByte(s))
+}
+
+
+
 func main() {
   n := nextLineValue()
+  v := nextLineValues()
   s := readLine()
-  inputString := make([]string, n)
-  for i:=0; i<n; i++ {
-    inputString[i] = string(s[i])
-  }
-  uniq := countUniqStringInSlice(&inputString)
+  a := getStringArray()
 
-  q := nextLineValue()
-  queries := make([]string, q)
-  for i:=0; i<q; i++ {
-    queries[i] = readLine()
-  }
+  sb := stringToByte(s)
+  sbuf := getStringBuffer(s)
 
-  for i:=0; i<q; i++ {
-    query := strings.Split(queries[i], " ")
-    num, _ := strconv.Atoi(query[1])
-    if query[0] == "1" {
-      inputString[num-1] = query[2]
-    } else {
-      numEnd, _ := strconv.Atoi(query[2])
-      toCheck := inputString[num-1:numEnd]
-      fmt.Println(len(uniq))
-    }
-  }
+  ss := byteToString(&sb)
+
+  fmt.Println(ss)
 }

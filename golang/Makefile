@@ -77,7 +77,7 @@ resume:
 	@if [ -f main.go ]; then \
 		cp main.go main.tmp.go; \
 	fi
-	. .CONTEST && cp main.go contests/$${CONTEST}/$${q}/main.go main.go
+	. .CONTEST && . .QUESTION && cp contests/$${CONTEST}/$${QUESTION}/main.go main.go
 	rm -f go.mod go.sum
 	go mod init main
 	make get
